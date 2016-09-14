@@ -1,0 +1,21 @@
+Direct Kinematics - 
+  
+  Xj1 = Xm1 - R.Cos(theta1)
+  Yj1 = Ym1 + R.Sin(theta1)
+  Xj2 = Xm2 - R.Cos(theta2)
+  Yj2 = Ym2 + R.Sin(theta2)
+
+  Ya = Yj1 + 0.5(Yj2 - Yj1)
+  
+  Xt2 = Xa - h.Cos(pi/2 - alpha)
+  Yt2 = Ya - h.Sin(pi/2 - alpha)
+  
+  h = sqrt(R^2 - (0.5(j2 - j1)))
+  
+Indirect Kinematics - (These will need to be double-checked)
+
+  Xj21 = Xt + R.Cos(pi/2 - alpha) 
+  Yj21 = Yt + R.Sin(pi/2 - alpha)
+  
+  Xj22 = Xt - R.Cos(pi/2 - alpha)
+  Yj22 = Yt - R.Sin(pi/2 - alpha)
