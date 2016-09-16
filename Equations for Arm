@@ -12,10 +12,13 @@ Direct Kinematics -
   
   h = sqrt(R^2 - (0.5(j2 - j1)))
   
-Indirect Kinematics - (These will need to be double-checked)
+(Inverse) Indirect Kinematics - (These will need to be double-checked)
 
   Xj21 = Xt + R.Cos(pi/2 - alpha) 
   Yj21 = Yt + R.Sin(pi/2 - alpha)
   
   Xj22 = Xt - R.Cos(pi/2 - alpha)
   Yj22 = Yt - R.Sin(pi/2 - alpha)
+  
+  atan= inverse tan (tan-1)
+  angle = atan2(yj2 - ym, xj2 - xm)
