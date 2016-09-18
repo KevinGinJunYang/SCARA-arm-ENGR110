@@ -136,11 +136,11 @@ public class Arm
             // double xt = ...;
             double xt = xa + h*Math.cos((Math.PI / 2) - alpha);
             // double yt = ...;
-            double yt = ya + h*Math.cos((Math.PI / 2) - alpha);
+            double yt = ya + h*Math.sin((Math.PI / 2) - alpha);
             //  xt2 = xa - h.*cos(alpha-pi/2);
             double xt2 = xa - h*Math.cos(alpha - (Math.PI / 2) );
             //  yt2 = ya - h.*sin(alpha-pi/2);
-            double yt2 = ya - h*Math.cos(alpha - (Math.PI / 2) );
+            double yt2 = ya - h*Math.sin(alpha - (Math.PI / 2) );
             /**
              * Need to double check what variable needs to be updated in the class                           
              */  
