@@ -18,10 +18,10 @@ Direct Kinematics -
   angle (beta) = atan2(yt2 - ym, xt2 - xm)
   α = π/2 − (π − β)
 
- Xj21 = Xt + R.Cos(alpha) 
- Yj21 = Yt + R.Sin(alpha)
+ Xj21 = Xt - R.Cos(alpha) 
+ Yj21 = Yt - R.Sin(alpha)
   
- Xj22 = Xt - R.Cos(alpha)
- Yj22 = Yt - R.Sin(alpha)
+ Xj22 = Xt + R.Cos(alpha)
+ Yj22 = Yt + R.Sin(alpha)
   
   
