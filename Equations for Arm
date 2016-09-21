@@ -12,6 +12,8 @@ Direct Kinematics -
   
   h = sqrt(R^2 - (0.5(j2 - j1)))
   
+  theta =   atan2(yj21 - ym2, xj21 - xm2)
+  
 (Inverse) Indirect Kinematics - (These will need to be double-checked)
 
  atan= inverse tan (tan-1)
