@@ -1,5 +1,4 @@
 
-
 /**
  * Class represents SCARA robotic arm.
  * 
@@ -15,7 +14,7 @@ public class Arm
 {
 
     // fixed arm parameters
-    private int xm1;  // coordinates of the motor(measured in pixels of the picture)
+    private int xm1;  
     private int ym1;
     private int xm2;
     private int ym2;
@@ -54,11 +53,11 @@ public class Arm
      */
     public Arm()
     {
-        xm1 = 290; // set motor coordinates
-        ym1 = 372;
-        xm2 = 379;
+        xm1 = 287; // set motor coordinates
+        ym1 = 374;
+        xm2 = 377;
         ym2 = 374;
-        r = 156.0;
+        r = 154;
         theta1 = -90.0*Math.PI/180.0; // initial angles of the upper arms
         theta2 = -90.0*Math.PI/180.0;
         valid_state = false;
@@ -125,12 +124,13 @@ public class Arm
         double  xa = xj1 + 0.5*(xj1+xj2); 
         double  ya = yj1 + 0.5*(yj1+yj2);
         // distance between joints
-        double d = Math.sqrt((xj2-xj1)^2 + (yj2-yj1)^2);
+        double d = Math.hypot(xj2-xj1, yj2-yj1);
         if (d<2*r){
             valid_state = true;
             // half distance between tool positions
-            double h = Math.sqrt(r^2 - (0.5*(d))^2);
+            double h = Math.sqrt(Math.pow(r, 2) - Math.pow(0.5*(d) , 2));
             //double alpha= ...;
+            
             double alpha = Math.atan((yj1 - yj2)/(xj2 - xj1));
             // tool position
             // double xt = ...;
@@ -144,7 +144,7 @@ public class Arm
             /**
              * Need to double check what variable needs to be updated in the class                           
              */  
-            
+
         } else {
             valid_state = false;
         }
@@ -162,7 +162,7 @@ public class Arm
         double dx1 = xt - xm1; 
         double dy1 = yt - ym1;
         // distance between pem and motor
-        double d1 = ...;
+        double d1 = Math.hypot(dx1, dy1);
         if (d1>2*r){
             //UI.println("Arm 1 - can not reach");
             valid_state = false;
@@ -172,10 +172,13 @@ public class Arm
         double l1 = d1/2;
         double h1 = Math.sqrt(r*r - d1*d1/4);
         // elbows positions
-        xj1 = xt + r*(Math.cos((Math.PI/2) - alpha))
-        //yj1 = ...;
+        double angBeta = Math.atan2(yt - ym1, xt - xm1);
+        double angAlpha = Math.PI/2 - (Math.PI - angBeta);
 
-        ///theta1 = ...;
+        xj1 = xt + r * Math.cos(angAlpha);  
+        yj1 = yt + r * Math.sin(angAlpha);
+
+        theta1 = Math.atan2(yj1 - ym1, xj1 - xm1);
         if ((theta1>0)||(theta1<-Math.PI)){
             valid_state = false;
             //UI.println("Ange 1 -invalid");
@@ -185,7 +188,7 @@ public class Arm
         // theta12 = atan2(yj12 - ym1,xj12-xm1);
         double dx2 = xt - xm2; 
         double dy2 = yt - ym2;
-        double d2 = ...;
+        double d2 = Math.hypot(dx2, dy2);
         if (d2>2*r){
             // UI.println("Arm 2 - can not reach");
             valid_state = false;
@@ -196,10 +199,15 @@ public class Arm
 
         double h2 = Math.sqrt(r*r - d2*d2/4);
         // elbows positions
-        xj2 = ...;
-        yj2 = ...;
+        angBeta = Math.atan2(yt - ym2, xt - xm2);
+        angAlpha = Math.PI/2 - (Math.PI - angBeta);
+
+        xj2 = xt - r * Math.cos(angAlpha);  
+        yj2 = yt + r * Math.sin(angAlpha);
+
+        
         // motor angles for both 1st elbow positions
-        theta2 = ...;
+        theta2 = Math.atan2(yj2 - ym1, xj2 - xm1);
         if ((theta2>0)||(theta2<-Math.PI)){
             valid_state = false;
             //UI.println("Ange 2 -invalid");
