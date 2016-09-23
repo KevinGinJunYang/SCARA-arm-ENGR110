@@ -203,11 +203,11 @@ public class Arm
         angAlpha = Math.PI/2 - (Math.PI - angBeta);
 
         xj2 = xt - r * Math.cos(angAlpha);  
-        yj2 = yt + r * Math.sin(angAlpha);
+        yj2 = yt - r * Math.sin(angAlpha);
 
         
         // motor angles for both 1st elbow positions
-        theta2 = Math.atan2(yj2 - ym1, xj2 - xm1);
+        theta2 = Math.atan2(yj2 - ym2, xj2 - xm2);
         if ((theta2>0)||(theta2<-Math.PI)){
             valid_state = false;
             //UI.println("Ange 2 -invalid");
