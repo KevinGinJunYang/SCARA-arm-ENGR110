@@ -1,0 +1,4 @@
+ssh pi@ --ip--
+pw = pi
+sudo rm -R //Folder-Name
+git clone //Github repo
