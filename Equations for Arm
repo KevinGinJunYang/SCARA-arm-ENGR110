@@ -2,7 +2,8 @@ Direct Kinematics -
   
   Xj1 = Xm1 - R.Cos(theta1)
   Yj1 = Ym1 + R.Sin(theta1)
-  Xj2 = Xm2 - R.Cos(theta2)
+  
+  Xj2 = Xm2 + R.Cos(theta2)
   Yj2 = Ym2 + R.Sin(theta2)
 
   Ya = Yj1 + 0.5(Yj2 - Yj1)
@@ -20,10 +21,10 @@ Direct Kinematics -
   angle (beta) = atan2(yt2 - ym, xt2 - xm)
   α = π/2 − (π − β)
 
- Xj21 = Xt - R.Cos(alpha) 
- Yj21 = Yt - R.Sin(alpha)
+ Xj21 = Xt + h.Cos(alpha) 
+ Yj21 = Yt + h.Sin(alpha)
   
- Xj22 = Xt + R.Cos(alpha)
- Yj22 = Yt + R.Sin(alpha)
+ Xj22 = Xt - R.Cos(alpha)
+ Yj22 = Yt - R.Sin(alpha)
   
   
