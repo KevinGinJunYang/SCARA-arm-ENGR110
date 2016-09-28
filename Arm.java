@@ -48,6 +48,10 @@ public class Arm
     private double yt;
     private boolean valid_state; // is state of the arm physically possible?
 
+    public ArrayList<Integer>pwm1 = new ArrayList<Integer>();
+    public ArrayList<Integer>pwm2 = new ArrayList<Integer>();
+    public ArrayList<Integer>pwm3 = new ArrayList<Integer>();
+
     /**
      * Constructor for objects of class Arm
      */
@@ -130,7 +134,7 @@ public class Arm
             // half distance between tool positions
             double h = Math.sqrt(Math.pow(r, 2) - Math.pow(0.5*(d) , 2));
             //double alpha= ...;
-            
+
             double alpha = Math.atan((yj1 - yj2)/(xj2 - xj1));
             // tool position
             // double xt = ...;
@@ -159,8 +163,8 @@ public class Arm
         xt = xt_new;
         yt = yt_new;
         valid_state = true;
-        double dx1 = xt - xm1; 
-        double dy1 = yt - ym1;
+        double dx1 = Math.abs(xt - xm1); 
+        double dy1 = Math.abs(yt - ym1);
         // distance between pem and motor
         double d1 = Math.hypot(dx1, dy1);
         if (d1>2*r){
@@ -172,7 +176,8 @@ public class Arm
         double l1 = d1/2;
         double h1 = Math.sqrt(r*r - d1*d1/4);
         // elbows positions
-        double angBeta = Math.atan2(yt - ym1, xt - xm1);
+        //---------------
+        double angBeta = Math.atan2(yt - ym1,xt - xm1);
         double angAlpha = Math.PI/2 - (Math.PI - angBeta);
 
         xj1 = xt + r * Math.cos(angAlpha);  
@@ -186,9 +191,10 @@ public class Arm
         }
 
         // theta12 = atan2(yj12 - ym1,xj12-xm1);
-        double dx2 = xt - xm2; 
-        double dy2 = yt - ym2;
+        double dx2 = Math.abs(xt - xm2); 
+        double dy2 = Math.abs(yt - ym2);
         double d2 = Math.hypot(dx2, dy2);
+        /////////////////////////////////
         if (d2>2*r){
             // UI.println("Arm 2 - can not reach");
             valid_state = false;
@@ -205,7 +211,6 @@ public class Arm
         xj2 = xt - r * Math.cos(angAlpha);  
         yj2 = yt - r * Math.sin(angAlpha);
 
-        
         // motor angles for both 1st elbow positions
         theta2 = Math.atan2(yj2 - ym2, xj2 - xm2);
         if ((theta2>0)||(theta2<-Math.PI)){
@@ -213,7 +218,11 @@ public class Arm
             //UI.println("Ange 2 -invalid");
             return;
         }
-
+       
+        pwm1.add(get_pwm1());
+        pwm2.add(get_pwm2());
+        pwm3.add(1000);
+    
         //UI.printf("xt:%3.1f, yt:%3.1f\n",xt,yt);
         //UI.printf("theta1:%3.1f, theta2:%3.1f\n",theta1*180/Math.PI,theta2*180/Math.PI);
         return;
@@ -238,12 +247,13 @@ public class Arm
     // linear intepolation
     public int get_pwm1(){
         int pwm = 0;
+        pwm = Math.round((long)((theta1 * -10.4) + 588.27));
         return pwm;
     }
     // ditto for motor 2
     public int get_pwm2(){
         int pwm =0;
-        //pwm = (int)(pwm2_90 + (theta2 - 90)*pwm2_slope);
+        pwm = Math.round((long)((theta2 *-10.52) + 700.52));
         return pwm;
     }
 
