@@ -1,3 +1,4 @@
+package JavaCode;
 
 /**
  * Class represents SCARA robotic arm.
@@ -46,22 +47,20 @@ public class Arm
     private double yj2; 
     private double xt;     // position of the tool
     private double yt;
+    private int pwm1; // position of motor
+    private int pwm2;
     private boolean valid_state; // is state of the arm physically possible?
-
-    public ArrayList<Integer>pwm1 = new ArrayList<Integer>();
-    public ArrayList<Integer>pwm2 = new ArrayList<Integer>();
-    public ArrayList<Integer>pwm3 = new ArrayList<Integer>();
 
     /**
      * Constructor for objects of class Arm
      */
     public Arm()
     {
-        xm1 = 287; // set motor coordinates
+        xm1 = 289; // set motor coordinates
         ym1 = 374;
-        xm2 = 377;
+        xm2 = 378;
         ym2 = 374;
-        r = 154;
+        r = 156;
         theta1 = -90.0*Math.PI/180.0; // initial angles of the upper arms
         theta2 = -90.0*Math.PI/180.0;
         valid_state = false;
@@ -102,6 +101,10 @@ public class Arm
         // draw Field Of View
         UI.setColor(Color.GRAY);
         UI.drawRect(0,0,640,480);
+        //error below angl
+        UI.drawLine(0, ym1, 640, ym1);
+        
+       
 
         // it can b euncommented later when
         // kinematic equations are derived
@@ -125,14 +128,14 @@ public class Arm
     public void directKinematic(){
 
         // midpoint between joints
-        double  xa = xj1 + 0.5*(xj1+xj2); 
-        double  ya = yj1 + 0.5*(yj1+yj2);
+        double  xa = xj1 + 0.5*(xj2 - xj1); 
+        double  ya = yj1 + 0.5*(yj2 - yj1);
         // distance between joints
-        double d = Math.hypot(xj2-xj1, yj2-yj1);
+        double d = Math.sqrt( Math.pow((xj2 - xj1), 2) +  Math.pow((yj2 - yj1), 2) );
         if (d<2*r){
             valid_state = true;
             // half distance between tool positions
-            double h = Math.sqrt(Math.pow(r, 2) - Math.pow(0.5*(d) , 2));
+            double h = Math.sqrt(Math.pow(r, 2) - (Math.pow((d / 2) , 2)) / 2);
             //double alpha= ...;
 
             double alpha = Math.atan((yj1 - yj2)/(xj2 - xj1));
@@ -163,72 +166,88 @@ public class Arm
         xt = xt_new;
         yt = yt_new;
         valid_state = true;
-        double dx1 = Math.abs(xt - xm1); 
-        double dy1 = Math.abs(yt - ym1);
+        double dx1 = xt - xm1; 
+        double dy1 = yt - ym1;
+        double xa = xm1 + 0.5 * (dx1);
+        double ya = ym1 + 0.5 * (dy1);
         // distance between pem and motor
-        double d1 = Math.hypot(dx1, dy1);
-        if (d1>2*r){
-            //UI.println("Arm 1 - can not reach");
+        double d1 = Math.sqrt(Math.pow(dx1, 2) + Math.pow(dy1, 2));
+        double l1 = d1/2;
+        double h1 = Math.sqrt((r*r) - ((d1*d1)/4));
+
+        if (d1>2*r || xj1 > (xm1 + r)){
+            UI.println("Arm 1 - can not reach");
             valid_state = false;
             return;
         }
 
-        double l1 = d1/2;
-        double h1 = Math.sqrt(r*r - d1*d1/4);
         // elbows positions
         //---------------
-        double angBeta = Math.atan2(yt - ym1,xt - xm1);
-        double angAlpha = Math.PI/2 - (Math.PI - angBeta);
+        //double angBeta = Math.atan2(yt - ym1,xt - xm1);
+        //double angAlpha = Math.PI/2 - (Math.PI - angBeta);
+        double angAlpha = Math.PI - Math.atan2(dy1, dx1);
 
-        xj1 = xt + r * Math.cos(angAlpha);  
-        yj1 = yt + r * Math.sin(angAlpha);
+        xj1 = xa + h1 * Math.cos((Math.PI / 2) - angAlpha);
+        yj1 = ya + h1 * Math.sin((Math.PI / 2) - angAlpha);
 
         theta1 = Math.atan2(yj1 - ym1, xj1 - xm1);
         if ((theta1>0)||(theta1<-Math.PI)){
             valid_state = false;
-            //UI.println("Ange 1 -invalid");
+            UI.println("Ange 1 -invalid");
             return;
+        }
+        
+        if(yt >= (yj2 + ((yj1-yj2) / 2))){
+            valid_state = false;
+            UI.println("Invalid points");
         }
 
         // theta12 = atan2(yj12 - ym1,xj12-xm1);
-        double dx2 = Math.abs(xt - xm2); 
-        double dy2 = Math.abs(yt - ym2);
-        double d2 = Math.hypot(dx2, dy2);
+        double dx2 = xt - xm2; 
+        double dy2 = yt - ym2;
+        double d2 = Math.sqrt(Math.pow(dx2, 2) + Math.pow(dy2, 2));
         /////////////////////////////////
         if (d2>2*r){
-            // UI.println("Arm 2 - can not reach");
+            UI.println("Arm 2 - can not reach");
             valid_state = false;
             return;
         }
 
         double l2 = d2/2;
 
-        double h2 = Math.sqrt(r*r - d2*d2/4);
-        // elbows positions
-        angBeta = Math.atan2(yt - ym2, xt - xm2);
-        angAlpha = Math.PI/2 - (Math.PI - angBeta);
+        double h2 = Math.sqrt((r*r) - ((d2*d2)/4));
+        xa = xm2 + 0.5 * (dx2);
+        ya = ym2 + 0.5 * (dy2);
+        double angAlpha2 = Math.PI - Math.atan2(dy2, dx2);
 
-        xj2 = xt - r * Math.cos(angAlpha);  
-        yj2 = yt - r * Math.sin(angAlpha);
+        // elbows positions
+
+        xj2 = xa - h2 * Math.cos((Math.PI / 2) - angAlpha2);
+        yj2 = ya - h2 * Math.sin((Math.PI / 2) - angAlpha2);
 
         // motor angles for both 1st elbow positions
         theta2 = Math.atan2(yj2 - ym2, xj2 - xm2);
         if ((theta2>0)||(theta2<-Math.PI)){
             valid_state = false;
-            //UI.println("Ange 2 -invalid");
+            UI.println("Ange 2 -invalid");
             return;
         }
-       
-        pwm1.add(get_pwm1());
-        pwm2.add(get_pwm2());
-        pwm3.add(1000);
-    
+
+        this.pwm();
+
         //UI.printf("xt:%3.1f, yt:%3.1f\n",xt,yt);
         //UI.printf("theta1:%3.1f, theta2:%3.1f\n",theta1*180/Math.PI,theta2*180/Math.PI);
         return;
     }
 
     // returns angle of motor 1
+    public void pwm(){
+
+        pwm1 = (int) ((((theta1) * -9.8) + 314.3));
+        pwm2 = (int) ((((theta2) * -9.9)  + 1034.5));
+
+    }
+
     public double get_theta1(){
         return theta1;
     }
@@ -247,13 +266,15 @@ public class Arm
     // linear intepolation
     public int get_pwm1(){
         int pwm = 0;
-        pwm = Math.round((long)((theta1 * -10.4) + 588.27));
+        pwm = (int) ((10.4*theta1)+239.02);
+        //pwm = (int)(((theta1 * 10.4) + 588.27));
         return pwm;
     }
     // ditto for motor 2
     public int get_pwm2(){
         int pwm =0;
-        pwm = Math.round((long)((theta2 *-10.52) + 700.52));
+        pwm = (int) ((10.4*theta2)+850.33);
+        //pwm = (int)(((theta2 *10.52) + 700.52));
         return pwm;
     }
 
